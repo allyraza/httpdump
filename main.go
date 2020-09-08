@@ -5,15 +5,19 @@ import (
 	"net/http"
 )
 
+func headers(r *http.Request) string {
+	headers := ""
+	for k := range r.Header {
+		headers += fmt.Sprintf("%s: %s\n", k, r.Header.Get(k))
+	}
+
+	return headers
+}
+
 // RequestDumpHandler dumps request to stdout
 func RequestDumpHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		headers := ""
-		for k := range r.Header {
-			headers += fmt.Sprintf("%s: %s\n", k, r.Header.Get(k))
-		}
-
-		fmt.Printf("%s %s\n\n%s\n", r.Method, r.URL, headers)
+		fmt.Printf("%s %s\n\n%s\n", r.Method, r.URL, headers(r))
 	})
 }
 
@@ -26,6 +30,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", RequestDumpHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("hello"))
 	}))
 
