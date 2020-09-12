@@ -1,6 +1,6 @@
 ### httpdump
 
-A set http handlers to dump `http.Request` to stdout.
+http handler to dump `http.Request` to stdout.
 
 ### How to use it?
 
